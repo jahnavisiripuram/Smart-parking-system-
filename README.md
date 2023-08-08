@@ -1,130 +1,29 @@
-# Smart-parking-system-
-# IOT-based car parking management system help in efficient parking space utilization only Arduino code and components used.
+ Smart Parking System Project using Arduino, IR Sensor, and Servo Motor. Here we will discuss Introduction to Smart Parking System Project,
+ Project Concept, Block Diagram, Components Required, Working Principle, and Arduino code.
+ A smart parking system is a technologically advanced solution designed to optimize and enhance the parking experience for both drivers and parking operators. Traditional parking management can often be inefficient, leading to congestion, wasted time, and frustration for drivers. A smart parking system addresses these issues by utilizing various technologies to streamline the parking process and provide real-time information to users.
 
-#include <Servo.h> //includes the servo library
-#include <Wire.h> 
-#include <LiquidCrystal_I2C.h> //includes LiquidCrystal_I2C library
-LiquidCrystal_I2C lcd(0x27, 20, 4);
-Servo myservo;
-#define ir_enter 2
-#define ir_back  4
-#define ir_car1 5
-#define ir_car2 6
-#define ir_car3 7
-#define ir_car4 8
-int S1=0, S2=0, S3=0, S4=0 ;
-int flag1=0, flag2=0; 
-int slot = 6;  
-void setup(){
-Serial.begin(9600);
-// initialize digital pins as input.
-pinMode(ir_car1, INPUT);
-pinMode(ir_car2, INPUT);
-pinMode(ir_car3, INPUT);
-pinMode(ir_car4, INPUT);
-pinMode(ir_enter, INPUT);
-pinMode(ir_back, INPUT);
-myservo.attach(9); // Servo motor pin connected to D9
-myservo.write(90); // sets the servo at 0 degree position
-// Print text on display
-lcd.begin(20, 4);  
-lcd.setCursor (0,1);
-lcd.print("    Smart Car   ");
-lcd.setCursor (0,2);
-lcd.print(" Parking System ");
-delay (2000);
-lcd.clear();   
-Read_Sensor();
-int total = S1+S2+S3+S4;
-slot = slot-total; 
-}
-void loop()
-{
-Read_Sensor();
-lcd.setCursor (0,0);
-lcd.print("   Have Slot: "); 
-lcd.print(slot);
-lcd.print("    ");  
-lcd.setCursor (0,1);
-if(S1==1)
-{
-lcd.print("S1:Fill ");
-}
-else
-{
-lcd.print("S1:Empty");
-}
-lcd.setCursor (10,1);
-if(S2==1)
-{
-lcd.print("S2:Fill ");
-}
-else
-{
-lcd.print("S2:Empty");
-}
-lcd.setCursor (0,2);
-if(S3==1)
-{
-lcd.print("S3:Fill ");
-}
-else
-{
-lcd.print("S3:Empty");
-}
-lcd.setCursor (10,2);
-if(S4==1)
-{
-lcd.print("S4:Fill ");
-}
-else
-{
-lcd.print("S4:Empty");
-}
-/* Servo Motor Control
-***********************/
-if(digitalRead (ir_enter) == 0 && flag1==0) // read degital data from IR sensor1
-{
-if(slot>0)
-  {
-  flag1=1;
-  if(flag2==0)
-  {
-  myservo.write(180); 
-  slot = slot-1;
-  }
-  }
-  else
-  {
-   lcd.setCursor (0,0);
-   lcd.print(" Sorry Parking Full ");  
-   delay(1500);
-   }   
-   }
-   if(digitalRead (ir_back) == 0 && flag2==0) // read degital data from IR sensor2
-   {
-    flag2=1;
-    if(flag1==0)
-     {
-      myservo.write(180); // sets the servo at 180 degree position
-      slot = slot+1;
-      }
-   }
+The primary goal of a smart parking system is to make the entire parking process more convenient, efficient, and user-friendly. This is achieved through the integration of sensors, data analytics, mobile applications, and other technologies to provide accurate and up-to-date information about parking availability, pricing, and navigation.
 
-  if(flag1==1 && flag2==1)
-   {
-    delay (1000);
-    myservo.write(90); // sets the servo at 90 degree position
-    flag1=0, flag2=0;
-    }
-    delay(1);
-}
+# components used 
+Arduino Nano or Arduino Uno	1
+USB Cable for Arduino 	1
+IR Sensor	6
+Sg90 Servo Motor	1
+9V power supply	1
+PCB board or Breadboard 1
+Connecting wires-As required in the circuit diagram
+# Working Principle
+After assembling all components according to the circuit diagram and uploading the code to the Arduino board. Now place the sensors and servo 
+motor at accurate positions.
 
-void Read_Sensor()
-{
- S1=0, S2=0, S3=0, S4=0;
- if(digitalRead(ir_car1) == 0){S1=1;} // read degital data from IR sensor3
- if(digitalRead(ir_car2) == 0){S2=1;} // read degital data from IR sensor4
- if(digitalRead(ir_car3) == 0){S3=1;} // read degital data from IR sensor5
- if(digitalRead(ir_car4) == 0){S4=1;} // read degital data from IR sensor6
-}
+There are four parking slots in this project, IR sensor-3, 4, 5, and 6 are placed at slot-1, 2, 3, and 4 respectively. IR sensor-1 and 2 are placed at the entry and exit gate respectively and a servo motor is used to operate the common single entry and exit gate. The LCD display is placed near the entry gate.
+
+The system used IR sensor-3, 4, 5, and 6 to detect whether the parking slot is empty or not and IR sensor-1, and 2 for detecting vehicles arriving or not at the gate.
+
+In the beginning, when all parking slots are empty, then the LCD display shows all slots are empty.
+
+When a vehicle arrives at the gate of the parking area then the IR sensor-1 detects the vehicle and the system allowed to enter that vehicle by opening the servo barrier. After entering into the parking area when that vehicle occupies a slot then the LED display shows that the slot is full. In this way, this system automatically allows 4 vehicles.
+
+In case the parking is full, the system blocked the entrance gate by closing the servo barrier. And the LED display shows that slot-1, 2, 3, and 4 all are full.
+
+When a vehicle leaves a slot and arrives at the gate of the parking area then the IR sensor-2 detects that vehicle and the system open the servo barrier. Then the LED display shows that the slot is empty. Again the system will allow entering a new vehicle.
